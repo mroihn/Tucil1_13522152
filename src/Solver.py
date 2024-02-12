@@ -200,7 +200,7 @@ def compareArr(arr, sequences):
                 if a == len(sequences[i]) and cek and (not cekSeq[i]):
                     ans += seqVal[i]
                     cekSeq[i] = True
-                if ans > maxVal or (ans == maxVal and len(arr) < len(sequences[i])):
+                if ans > maxVal or (ans == maxVal and len(arr) < len(seqAns)):
                     seqAns = []
                     rowAns = []
                     colAns = []
