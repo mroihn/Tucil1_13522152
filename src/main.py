@@ -1,7 +1,10 @@
 from FileSystem import *
 from Solver import *
+import os
 
-print("1. input file atau 2. random")
+os.system("cls")
+print("Pilih Cara Input")
+print("1. Input File atau 2. Random")
 choice = input()
 
 
@@ -16,9 +19,9 @@ if choice == "1":
 
 if choice == "2":
     inputRand()
-    solveFile()
     printMatSeq()
+    solveFile()
     print("Ingin menyimpan hasil (Y/N)")
     choice = input()
     if choice == "Y":
-        saveFile()
+        saveFileRandom()

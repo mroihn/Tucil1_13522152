@@ -1,3 +1,4 @@
+import os
 import random
 import time
 
@@ -57,9 +58,9 @@ def dataParser(data):
 
 
 def saveFile():
-    print("Masukkan nama file")
+    print("Masukkan nama file output : ")
     filename = input()
-    f = open(filename, "w")
+    f = open("../test/" + filename, "w")
     f.write(str(maxVal))
     f.write("\n")
     for seq in seqAns:
@@ -67,7 +68,36 @@ def saveFile():
     f.write("\n")
     for j in range(len(rowAns)):
         f.write(str(colAns[j]) + "," + str(rowAns[j]) + "\n")
-    f.write("\n" + str(runtime) + " ms")
+    f.write("\n")
+    f.write("{:.2f} ms".format(runtime))
+    f.close()
+
+
+def saveFileRandom():
+    print("Masukkan nama file output : ")
+    filename = input()
+    f = open("../test/" + filename, "w")
+    f.write(str(maxVal))
+    f.write("\n")
+    for seq in seqAns:
+        f.write(seq + " ")
+    f.write("\n")
+    for j in range(len(rowAns)):
+        f.write(str(colAns[j]) + "," + str(rowAns[j]) + "\n")
+    f.write("\n" + "Random Matrix" + "\n")
+    for i in range(matHeight):
+        for j in range(matWidth):
+            f.write(str(arr[i][j].value) + " ")
+        f.write("\n")
+    f.write("\n" + "Random Sequences and Reward" + "\n")
+    for i in range(numbSeq):
+        for j in range(len(sequences[i])):
+            f.write(str(sequences[i][j]) + " ")
+        f.write("\n")
+        f.write(str(seqVal[i]) + "\n")
+
+    f.write("\n")
+    f.write("{:.2f} ms".format(runtime))
     f.close()
 
 
@@ -85,6 +115,15 @@ def inputRand():
     generateRand()
 
 
+def isUnique(arr):
+    if len(sequences) == 0:
+        return True
+    for i in range(len(sequences)):
+        if arr == sequences[i]:
+            return False
+    return True
+
+
 def generateRand():
     global arr, seqVal, sequences
     arrTmp = []
@@ -96,8 +135,14 @@ def generateRand():
 
     arrTmp = []
     for i in range(numbSeq):
-        for j in range(random.randint(1, maxLenSeq)):
-            arrTmp.append(random.choice(tokens))
+        cekUniq = False
+        while not cekUniq:
+            for j in range(random.randint(1, maxLenSeq)):
+                arrTmp.append(random.choice(tokens))
+            if isUnique(arrTmp):
+                cekUniq = True
+            else:
+                arrTmp = []
         sequences.append(arrTmp)
         arrTmp = []
         seqVal.append(random.randint(1, 100))
@@ -109,10 +154,14 @@ def printMatSeq():
         for j in range(matWidth):
             print(arr[i][j].value, end=" ")
         print("")
+    print("")
     print("Random Sequences and Reward")
     for i in range(numbSeq):
-        print(sequences[i])
+        for j in range(len(sequences[i])):
+            print(sequences[i][j], end=" ")
+        print("")
         print(seqVal[i])
+    print("")
 
 
 def resetArr(arr):
@@ -151,7 +200,7 @@ def compareArr(arr, sequences):
                 if a == len(sequences[i]) and cek and (not cekSeq[i]):
                     ans += seqVal[i]
                     cekSeq[i] = True
-                if ans > maxVal:
+                if ans > maxVal or (ans == maxVal and len(arr) < len(sequences[i])):
                     seqAns = []
                     rowAns = []
                     colAns = []
@@ -163,12 +212,13 @@ def compareArr(arr, sequences):
 
 
 def Visit(row, col, cnt, path, visitRow, buffMax, arr):
+    global Paths
     cellNow = arr[row][col]
     cellNow.visited = True
     path.append(cellNow)
+    Paths.append(path.copy())
 
     if cnt == buffMax - 1:
-        global Paths
         Paths.append(path.copy())
         cellNow.visited = False
         path.pop()
@@ -195,9 +245,10 @@ def solveFile():
 
     for i in range(matWidth):
         resetArr(arr)
-        Visit(0, i, 0, [], buffMax, 7, arr)
+        Visit(0, i, 0, [], True, buffMax, arr)
     solve(Paths, sequences)
 
+    print("Output : ")
     print(maxVal)
     for seq in seqAns:
         print(seq, end=" ")

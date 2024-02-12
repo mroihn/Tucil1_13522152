@@ -1,9 +1,13 @@
+import os
+
+
 def input_file():
     global data
-    print("Masukkan nama file (Pastikan file telah berada di folder test)")
+    os.system("cls")
+    print("Masukkan nama file (Pastikan file telah berada di folder test) :")
     fileName = input()
     data = []
-    with open("../test/"+fileName) as my_file:
+    with open("../test/" + fileName) as my_file:
         dataTmp = []
         for line in my_file:
             splitedLine = line.split(" ")
